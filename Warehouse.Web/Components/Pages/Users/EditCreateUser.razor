@@ -1,0 +1,90 @@
+﻿@page "/users/edit/{UserId}"
+@page "/users/create"
+@rendermode InteractiveServer
+
+@using Warehouse.Domain.Models.Constants
+
+<PageTitle>@(IsAdmin ? "Admin - Edit User" : $"Company - Edit User ({CompanyName})")</PageTitle>
+
+@if (ErrorMessages.Any())
+{
+    <div class="alert alert-danger" role="alert">
+        <ul class="mb-0">
+            @foreach (var message in ErrorMessages)
+            {
+                <li>@message</li>
+            }
+        </ul>
+    </div>
+}
+
+<div class="row pt-3">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <StatusMessage Message="@Message" />
+        <EditForm Model="Model" method="post" OnValidSubmit="SaveUser" FormName="saveUser">
+            <DataAnnotationsValidator />
+            <h2>@(IsEditMode ? "Edit User" : "Create User")</h2>
+            <hr />
+            <ValidationSummary class="text-danger" role="alert" />
+
+            <!-- First Name -->
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Model.FirstName" class="form-control" autocomplete="firstName" aria-required="true" placeholder="First Name" />
+                <label for="firstName">First Name</label>
+                <ValidationMessage For="() => Model.FirstName" class="text-danger" />
+            </div>
+
+            <!-- Last Name -->
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Model.LastName" class="form-control" autocomplete="lastName" aria-required="true" placeholder="Last Name" />
+                <label for="lastName">Last Name</label>
+                <ValidationMessage For="() => Model.LastName" class="text-danger" />
+            </div>
+
+            <!-- Email -->
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Model.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="Email" />
+                <label for="email">Email</label>
+                <ValidationMessage For="() => Model.Email" class="text-danger" />
+            </div>
+
+            <!-- Password (Disabled in Edit Mode) -->
+            <div class="form-floating mb-3">
+                <InputText type="password" @bind-Value="Model.Password" class="form-control" autocomplete="new-password" aria-required="true"
+                           placeholder="Password" disabled="@IsEditMode" />
+                <label for="password">Password</label>
+                <ValidationMessage For="() => Model.Password" class="text-danger" />
+            </div>
+
+            <!-- Confirm Password (Disabled in Edit Mode) -->
+            <div class="form-floating mb-3">
+                <InputText type="password" @bind-Value="Model.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true"
+                           placeholder="Confirm Password" disabled="@IsEditMode" />
+                <label for="confirm-password">Confirm Password</label>
+                <ValidationMessage For="() => Model.ConfirmPassword" class="text-danger" />
+            </div>
+
+            <!-- Role Selection -->
+            <div class="mb-3">
+                <label for="role" class="form-label">Role</label>
+                <InputSelect id="role" class="form-control" @bind-Value="Model.Role">
+                    @if (IsAdmin)
+                    {
+                        <option value="@Roles.User">User</option>
+                        <option value="@Roles.Administrator">Admin</option>
+                    }
+                    else
+                    {
+                        <option value="@Roles.CompanyUser">User</option>
+                        <option value="@Roles.CompanyManager">Manager</option>
+                    }
+                </InputSelect>
+            </div>
+
+            <!-- Buttons -->
+            <button type="submit" class="btn btn-success me-2">Save</button>
+            <button type="button" class="btn btn-secondary" @onclick="Cancel">Cancel</button>
+        </EditForm>
+    </div>
+</div>

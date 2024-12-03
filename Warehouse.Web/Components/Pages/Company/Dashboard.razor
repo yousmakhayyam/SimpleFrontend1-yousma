@@ -1,0 +1,83 @@
+﻿@page "/company/dashboard"
+@rendermode InteractiveServer
+
+<PageTitle>Company dashboard</PageTitle>
+
+<div class="container mt-5">
+    <div class="row">
+        @if (Model is not null)
+        {
+            <!-- Sidebar with Quick Actions -->
+            <div class="col-md-3 mb-4">
+                <div class="card shadow-sm">
+                    <div class="card-header">
+                        <h5>Quick Actions</h5>
+                    </div>
+                    <div class="list-group list-group-flush">
+                        <a href="/products/create" class="list-group-item list-group-item-action">Add New Product</a>
+                        <a href="/users?viewMode=company" class="list-group-item list-group-item-action">Manage Users</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9">
+                <!-- Company Overview Card -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header">
+                        <h5>Company Overview</h5>
+                    </div>
+                    <div class="card-body">
+                        <h3>@Model.Name</h3>
+                        <p><strong>Tax ID:</strong> @Model.TaxId</p>
+                        <p><strong>Address:</strong> @Model.Address.AddressLine1 @Model.Address.AddressLine2, @Model.Address.City, @Model.Address.Country</p>
+                        <p><strong>Manager:</strong> @Model.ManagerName</p>
+                    </div>
+                </div>
+
+                <!-- Newest Products Card -->
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-header">
+                        <h5>Newest Products</h5>
+                    </div>
+                    <div class="card-body">
+                        @if (Model.NewestProducts.Any())
+                        {
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>Product Name</th>
+                                        <th>Description</th>
+                                        <th>Price</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    @foreach (var product in Model.NewestProducts)
+                                    {
+                                        <tr @onclick="() => ViewProductDetails(product.Id)" style="cursor: pointer;">
+                                            <td>@product.Name</td>
+                                            <td>@product.Description</td>
+                                            <td>@product.Price.ToString()</td>
+                                            <td><a class="btn btn-sm btn-primary" href="/products/details/@product.Id">View</a></td>
+                                        </tr>
+                                    }
+                                    </tbody>
+                                </table>
+                            </div>
+                        }
+                        else
+                        {
+                            <p>No new products available.</p>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <p>Loading...</p>
+        }
+    </div>
+</div>

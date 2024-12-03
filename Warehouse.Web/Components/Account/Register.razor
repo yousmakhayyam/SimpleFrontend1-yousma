@@ -1,0 +1,51 @@
+﻿@page "/account/register"
+
+<PageTitle>@Loc["page.account.register.pageTitle.register"]</PageTitle>
+
+<div class="row pt-3">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <StatusMessage Message="@Message" />
+        <EditForm Model="Model" method="post" OnValidSubmit="RegisterUser" FormName="register">
+            <DataAnnotationsValidator />
+            <h2>@Loc["page.account.register.pageTitle.register"]</h2>
+            <hr />
+            <ValidationSummary class="text-danger" role="alert" />
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Model.FirstName" class="form-control" autocomplete="firstName" aria-required="true" placeholder="name@example.com" />
+                <label for="firstName">@Loc["page.account.register.formLabel.firstName"]</label>
+                <ValidationMessage For="() => Model.FirstName" class="text-danger" />
+            </div>
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Model.LastName" class="form-control" autocomplete="lastName" aria-required="true" placeholder="name@example.com" />
+                <label for="lastName">@Loc["page.account.register.formLabel.lastName"]</label>
+                <ValidationMessage For="() => Model.LastName" class="text-danger" />
+            </div>
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="Model.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                <label for="email">@Loc["page.account.register.formLabel.email"]</label>
+                <ValidationMessage For="() => Model.Email" class="text-danger" />
+            </div>
+            <div class="form-floating mb-3">
+                <InputText type="password" @bind-Value="Model.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                <label for="password">@Loc["page.account.register.formLabel.password"]</label>
+                <ValidationMessage For="() => Model.Password" class="text-danger" />
+            </div>
+            <div class="form-floating mb-3">
+                <InputText type="password" @bind-Value="Model.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
+                <label for="confirm-password">@Loc["page.account.register.formLabel.confirmPassword"]</label>
+                <ValidationMessage For="() => Model.ConfirmPassword" class="text-danger" />
+            </div>
+            <button type="submit" class="w-100 btn btn-lg btn-primary">@Loc["page.account.register.formLabel.button.registerUser"]</button>
+        </EditForm>
+        
+        <div class="pt-3">
+            <p>
+                <NavLink href="account/login">@Loc["page.account.register.formLabel.button.login"]</NavLink>
+            </p>
+            <p>
+                <NavLink href="account/registercompany">@Loc["page.account.register.formLabel.button.registerCompany"]</NavLink>
+            </p>
+        </div>
+    </div>
+</div>

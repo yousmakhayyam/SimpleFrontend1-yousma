@@ -1,0 +1,76 @@
+﻿@page "/users/details/{id}"
+@rendermode InteractiveServer
+
+<PageTitle>User Details</PageTitle>
+
+@if (IsLoading)
+{
+    <div class="d-flex justify-content-center align-items-center" style="height: 50vh;">
+        <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Loading...</span>
+        </div>
+    </div>
+}
+else if (Model != null)
+{
+    <div class="container mt-5">
+        <div class="card shadow-lg">
+            <div class="card-header bg-primary text-white">
+                <h4>User Details</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 text-center">
+                        <img src="https://via.placeholder.com/150" class="img-thumbnail rounded-circle mb-3" alt="User Image">
+                        <h5>@Model.FullName</h5>
+                        <small class="text-muted">@Model.Email</small>
+                    </div>
+                    <div class="col-md-8">
+                        <table class="table table-borderless">
+                            <tbody>
+                                <tr>
+                                    <th scope="row">First Name:</th>
+                                    <td>@Model.FirstName</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Last Name:</th>
+                                    <td>@Model.LastName</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Email:</th>
+                                    <td>@Model.Email</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Phone Number:</th>
+                                    <td>@(string.IsNullOrWhiteSpace(Model.PhoneNumber) ? "N/A" : Model.PhoneNumber)</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Role:</th>
+                                    <td>@Model.Role</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Company:</th>
+                                    <td>@(string.IsNullOrWhiteSpace(CompanyName) ? "N/A" : CompanyName)</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row">Created On:</th>
+                                    <td>@Model.JoinedOn.ToString("dd-MM-yyyy")</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer text-end">
+               <button class="btn btn-secondary" @onclick="NavigateBack">Back</button>
+                <button class="btn btn-primary" @onclick="NavigateToEditPage">Edit</button>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="alert alert-danger mt-5" role="alert">
+        User not found or unable to load details.
+    </div>
+}

@@ -1,0 +1,104 @@
+﻿@page "/"
+@rendermode InteractiveServer
+
+<style>
+    .hover-card {
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .hover-card:hover {
+        transform: scale(1.02); /* Slightly enlarge the card on hover */
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15); /* Add a shadow effect */
+        cursor: pointer; /* Change the cursor to indicate interactivity */
+    }
+</style>
+
+<AuthorizeView>
+    <Authorized>
+        <h3>Welcome, @UserName!</h3>
+
+        <p>We're glad to have you back. Here are some actions and recommendations for you:</p>
+
+        <!-- Key Actions Section -->
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Profile</h5>
+                        <p class="card-text">View and update your profile information.</p>
+                        <button class="btn btn-primary" @onclick="NavigateToProfile">View Profile</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Products</h5>
+                        <p class="card-text">Browse and explore available products.</p>
+                        <button class="btn btn-primary" @onclick="NavigateToProducts">Browse Products</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Logout</h5>
+                        <p class="card-text">Log out from your account securely.</p>
+                        <button class="btn btn-danger" @onclick="Logout">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </Authorized>
+    <NotAuthorized>
+        <h3>Welcome!</h3>
+
+        <p>Here are some actions and recommendations for you:</p>
+
+        <!-- Key Actions Section -->
+        <div class="row mt-4">
+            <div class="col-md-4">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Login</h5>
+                        <p class="card-text">Login to your account or create a new one</p>
+                        <button class="btn btn-primary" @onclick="NavigateToLogin">Login in</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">Products</h5>
+                        <p class="card-text">Browse and explore available products.</p>
+                        <button class="btn btn-primary" @onclick="NavigateToProducts">Browse Products</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </NotAuthorized>
+</AuthorizeView>
+
+<h4 class="mt-5">Recommended Products</h4>
+<p>Here are some products you might be interested in:</p>
+
+<div class="row row-cols-1 row-cols-md-3 g-3">
+    @foreach (var product in RecommendedProducts)
+    {
+        <div class="col">
+            <a href="@($"products/details/{product.Id}")" class="text-decoration-none text-reset">
+                <div class="card shadow-sm border-1 h-100 hover-card">
+                    <img src="uploads/images/@product.Images.FirstOrDefault(r => r.IsDefault)?.GetFullFileName"
+                         class="card-img-top img-fluid"
+                         style="height: 180px; object-fit: scale-down;" alt="@product.Name">
+                    <div class="card-body">
+                        <h5 class="card-title">@product.Name</h5>
+                        <p class="card-text mb-1"><strong>Category:</strong> @product.Category</p>
+                        <p class="card-text"><strong>Price:</strong> @product.Price</p>
+                    </div>
+                </div>
+            </a>
+        </div>
+    }
+</div>

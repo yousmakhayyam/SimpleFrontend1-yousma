@@ -1,0 +1,85 @@
+﻿@page "/products"
+@using Warehouse.Web.ViewModels.Products
+@rendermode InteractiveServer
+
+<!-- Page layout -->
+<h3>Product List</h3>
+
+<div class="mb-3">
+    <input type="text" class="form-control" placeholder="Search products..." @oninput="OnSearchInput" />
+</div>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th class="text-center"></th>
+            <th>
+                <button class="btn btn-link p-0 text-decoration-none" @onclick="() => OnSortChanged(nameof(ProductModel.Name))">
+                    Name
+                    @if (SortProperty == nameof(ProductModel.Name))
+                    {
+                        <span>@GetSortIcon(SortDirection)</span>
+                    }
+                </button>
+            </th>
+            <th>
+                <button class="btn btn-link p-0 text-decoration-none" @onclick="() => OnSortChanged(nameof(ProductModel.Description))">
+                    Description
+                    @if (SortProperty == nameof(ProductModel.Description))
+                    {
+                        <span>@GetSortIcon(SortDirection)</span>
+                    }
+                </button>
+            </th>
+            <th>
+                <button class="btn btn-link p-0 text-decoration-none" @onclick="() => OnSortChanged(nameof(ProductModel.Price))">
+                    Price
+                    @if (SortProperty == nameof(ProductModel.Price))
+                    {
+                        <span>@GetSortIcon(SortDirection)</span>
+                    }
+                </button>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in DisplayedProducts)
+        {
+            var defaultImage = product.Images.FirstOrDefault(r => r.IsDefault)?.GetFullFileName;
+            <tr @onclick="() => OpenProductDetails(product.Id)">
+                <td class="text-center">
+                    <img src="uploads/images/@defaultImage"
+                         alt="Default Product Image"
+                         class="img-thumbnail mx-auto d-block"
+                         style="width: 150px; height: 150px; object-fit: cover;" />
+                </td>
+                <td>@product.Name</td>
+                <td>@product.Description</td>
+                <td>@product.Price</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="d-flex justify-content-center mt-4">
+    <nav>
+        <ul class="pagination justify-content-center">
+            <li class="page-item @(CurrentPage == 1 ? "disabled" : "")">
+                <button class="page-link" @onclick="() => ChangePage(CurrentPage - 1)">Previous</button>
+            </li>
+            @for (var i = 1; i <= TotalPages; i++)
+            {
+                <li class="page-item @(i == CurrentPage ? "active" : "")">
+
+                    @{
+                        var navPageNumber = i;
+                    }
+                    <button class="page-link" @onclick="() => ChangePage(navPageNumber)">@navPageNumber</button>
+                </li>
+            }
+            <li class="page-item @(CurrentPage == TotalPages ? "disabled" : "")">
+                <button class="page-link" @onclick="() => ChangePage(CurrentPage + 1)">Next</button>
+            </li>
+        </ul>
+    </nav>
+</div>

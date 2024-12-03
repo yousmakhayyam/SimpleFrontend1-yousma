@@ -1,0 +1,45 @@
+﻿@page "/account/login"
+
+<PageTitle>@Loc["page.account.login.pageTitle.login"]</PageTitle>
+
+<div class="row pt-3">
+    <div class="col-md-4"></div>
+    <div class="col-md-4">
+        <section>
+            <StatusMessage Message="@errorMessage"/>
+            <EditForm Model="Model" method="post" OnValidSubmit="LoginUser" FormName="login">
+                <DataAnnotationsValidator/>
+                <h2>@Loc["page.account.login.pageTitle.login"]</h2>
+                <hr/>
+                <ValidationSummary class="text-danger" role="alert"/>
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="Model.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
+                    <label for="email" class="form-label">@Loc["page.account.login.formLabel.email"]</label>
+                    <ValidationMessage For="() => Model.Email" class="text-danger" />
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText type="password" @bind-Value="Model.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+                    <label for="password" class="form-label">@Loc["page.account.login.formLabel.password"]</label>
+                    <ValidationMessage For="() => Model.Password" class="text-danger" />
+                </div>
+                <div class="checkbox mb-3">
+                    <label class="form-label">
+                        <InputCheckbox @bind-Value="Model.RememberMe" class="darker-border-checkbox form-check-input" />
+                        @Loc["page.account.login.formLabel.rememberMe"]
+                    </label>
+                </div>
+                <div>
+                    <button type="submit" class="w-100 btn btn-lg btn-primary">@Loc["page.account.login.formLabel.button.login"]</button>
+                </div>
+                <div class="pt-3">
+                    <p>
+                        <NavLink href="account/register">@Loc["page.account.login.formLabel.button.registerUser"]</NavLink>
+                    </p>
+                    <p>
+                        <NavLink href="account/registercompany">@Loc["page.account.login.formLabel.button.registerCompany"]</NavLink>
+                    </p>
+                </div>
+            </EditForm>
+        </section>
+    </div>
+</div>

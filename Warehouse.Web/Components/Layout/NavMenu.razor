@@ -1,0 +1,157 @@
+﻿@implements IDisposable
+
+@inject NavigationManager NavigationManager
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary border-bottom border-body fixed-top bg-white" data-bs-theme="dark">
+    <div class="container-fluid">
+
+        <NavLink class="navbar-brand" href="products" Match="NavLinkMatch.All">
+            <span>Warehouse</span>
+        </NavLink>
+
+        <div class="collapse navbar-collapse">
+            <ul class="navbar-nav me-auto my-2 my-lg-0 navbar-nav-scroll">
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        <span>@Loc["navMenu.label.home"]</span>
+                    </NavLink>
+                </li>
+
+                <AuthorizeView>
+                    <Authorized>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                @Loc["navMenu.label.products"]
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <NavLink class="dropdown-item" href="products">
+                                        @Loc["navMenu.label.products.market"]
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink class="dropdown-item" href="products?viewMode=user">
+                                        @Loc["navMenu.label.products.userProducts"]
+                                    </NavLink>
+                                </li>
+
+                                <li><hr class="dropdown-divider"></li>
+
+                                <li>
+                                    <NavLink class="dropdown-item" href="products/create">
+                                        @Loc["navMenu.label.products.addProduct"]
+                                    </NavLink>
+                                </li>
+                            </ul>
+                        </li>
+                    </Authorized>
+
+                    <NotAuthorized>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="products">
+                                @Loc["navMenu.label.products.market"]
+                            </NavLink>
+                        </li>
+                    </NotAuthorized>
+                </AuthorizeView>
+
+
+                <AuthorizeView Roles="CompanyManager, CompanyUser">
+                    <Authorized>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                @Loc["navMenu.label.company"]
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <NavLink class="dropdown-item" href="company/dashboard">
+                                        @Loc["navMenu.label.company.options.profile"]
+                                    </NavLink>
+                                </li>
+                                <li>
+                                    <NavLink class="dropdown-item" href="products?viewMode=company">
+                                        @Loc["navMenu.label.company.options.products"]
+                                    </NavLink>
+                                </li>
+                                <AuthorizeView Roles="@Domain.Models.Constants.Roles.CompanyManager" Context="manager">
+                                    <li>
+                                        <NavLink class="dropdown-item" href="users?viewMode=company">
+                                            @Loc["navMenu.label.company.options.users"]
+                                        </NavLink>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <NavLink class="dropdown-item" href="products/create">
+                                            @Loc["navMenu.label.company.options.products.create"]
+                                        </NavLink>
+                                    </li>
+                                </AuthorizeView>
+                            </ul>
+                        </li>
+                    </Authorized>
+                </AuthorizeView>
+
+                <AuthorizeView Roles="@Domain.Models.Constants.Roles.Administrator">
+                    <Authorized>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="users?viewMode=admin">
+                                <span>@Loc["navMenu.label.adminPanel"]</span>
+                            </NavLink>
+                        </li>
+                    </Authorized>
+                </AuthorizeView>
+            </ul>
+
+            <div class="d-flex">
+                <AuthorizeView>
+                    <Authorized>
+                        <div class="nav-item">
+                            <NavLink class="nav-link" href="Profile">
+                                @context.User.Identity?.Name
+                            </NavLink>
+                        </div>
+                        <div class="nav-item">
+                            <NavLink class="nav-link" href="Account/Logout">
+                                @Loc["navMenu.label.logout"]
+                            </NavLink>
+                        </div>
+                    </Authorized>
+                    <NotAuthorized>
+                        <div class="nav-item">
+                            <NavLink class="nav-link" href="Account/Register">
+                                @Loc["navMenu.label.register"]
+                            </NavLink>
+                        </div>
+                        <div class="nav-item">
+                            <NavLink class="nav-link" href="Account/Login">
+                                @Loc["navMenu.label.login"]
+                            </NavLink>
+                        </div>
+                    </NotAuthorized>
+                </AuthorizeView>
+            </div>
+        </div>
+    </div>
+</nav>
+
+@code {
+private string? currentUrl;
+
+protected override void OnInitialized()
+{
+    currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+    NavigationManager.LocationChanged += OnLocationChanged;
+}
+
+private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+{
+    currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+    StateHasChanged();
+}
+
+public void Dispose()
+{
+    NavigationManager.LocationChanged -= OnLocationChanged;
+}
+}
+

@@ -1,0 +1,167 @@
+﻿@page "/products/create"
+@page "/products/edit/{ProductId:guid}"
+
+@rendermode InteractiveServer
+
+<PageTitle>@if (EditMode)
+           {
+               @:Edit product
+           }
+           else
+           {
+               @:Add new product
+           }
+</PageTitle>
+
+@if (ErrorMessages.Any())
+{
+    <div class="alert alert-danger" role="alert">
+        <ul class="mb-0">
+            @foreach (var message in ErrorMessages)
+            {
+                <li>@message</li>
+            }
+        </ul>
+    </div>
+}
+
+@if (EditMode)
+{
+    <h3>Edit Product</h3>
+}
+else
+{
+    <h3>Add New Product</h3>
+}
+
+<div class="container mt-4" style="padding-bottom: 100px;">
+    <form>
+        <!-- Product Name -->
+        <div class="mb-3">
+            <label for="name" class="form-label">Product Name</label>
+            <input type="text" class="form-control" id="name" @bind="Model.Name" required />
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3">
+            <label for="description" class="form-label">Description (optional)</label>
+            <textarea class="form-control" id="description" @bind="Model.Description"></textarea>
+        </div>
+
+        <!-- Price (Dollars and Cents) -->
+        <div class="mb-3">
+            <label for="price" class="form-label">Price</label>
+            <div class="input-group">
+                <input type="number" class="form-control" placeholder="Dollars" @bind="Model.Price.Amount" required min="0" />
+                <span class="input-group-text">.</span>
+                <input type="number" class="form-control" placeholder="Cents" @bind="Model.Price.Cents" required min="0" max="99" />
+            </div>
+        </div>
+
+        <!-- Currency Dropdown -->
+        <div class="mb-3">
+            <label for="currency" class="form-label">Currency</label>
+            <InputSelect id="currency" class="form-control" @bind-Value="Model.Price.Currency">
+                <option value="EUR">Euro</option>
+                <option value="PLN">Pln</option>
+                <option value="USD">Usd</option>
+            </InputSelect>
+        </div>
+        
+        <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <InputSelect id="category" class="form-control" @bind-Value="Model.Category" required>
+                <option value="" selected>- Select category -</option>
+                <option value="Electronic">Electronic</option>
+                <option value="Health">Health</option>
+                <option value="Tools">Tools</option>
+            </InputSelect>
+        </div>
+        
+        <div class="mb-3">
+            <label for="quantity" class="form-label">Available quantity</label>
+            <div class="input-group">
+                <input type="number" class="form-control" placeholder="Quantity" @bind="Model.Quantity" required min="0" max="9999" />
+            </div>
+        </div>
+        
+        @if (UserHasCompanyAccess && !EditMode)
+        {
+            <!-- Added By (User or Company) -->
+            <div class="mb-3">
+                <label for="addedBy" class="form-label">Adding product on behalf:</label>
+                <InputSelect id="addedBy" class="form-control" @bind-Value="Model.AddedBy">
+                    <option value="User">Personal</option>
+                    <option value="Company">Company</option>
+                </InputSelect>
+            </div>
+        }
+
+        <div class="mb-3 text-center pt-2">
+            <!-- Centered and Styled Upload Button -->
+            <label class="btn btn-primary btn-lg">
+                <i class="bi bi-upload"></i> Upload Images
+                <InputFile multiple OnChange="HandleImageUpload" style="display: none;" />
+            </label>
+            <div class="form-text mt-2">Upload one or more images for the product (Max 5MB each).</div>
+        </div>
+        
+        @if (Model.Images?.Any() ?? false)
+        {
+            <div class="row row-cols-1 gy-3 mt-4">
+                <InputRadioGroup @bind-Value="Model.DefaultImageFileId" Name="defaultImageRadioGroup" class="d-flex flex-column">
+                    @foreach (var image in Model.Images)
+                    {
+                        <div class="col">
+                            <div class="card">
+                                <div class="row g-0 align-items-center">
+                                    <!-- Image Preview -->
+                                    <div class="col-auto">
+                                        <img src="uploads/images/@image.GetFullFileName" class="img-thumbnail"
+                                             style="width: 200px; height: 150px; object-fit: cover;" alt="Product Image" />
+                                    </div>
+
+                                    <!-- File Details, Default Selector, and Remove Button -->
+                                    <div class="col">
+                                        <div class="card-body d-flex justify-content-between align-items-center">
+                                            <div>
+                                                <h6 class="mb-1 text-truncate">@image.FileName</h6>
+                                                <small class="text-muted">Image Preview</small>
+                                            </div>
+                                            <div class="d-flex align-items-center">
+                                                <!-- Default Image Selector -->
+                                                <div class="form-check me-3">
+                                                    <InputRadio TValue="Guid" class="form-check-input" name="defaultImageRadioGroup"
+                                                                id="@($"default-{image.FileId}")" value="@image.FileId" />
+                                                    <label class="form-check-label" for="@($"default-{image.FileId}")">
+                                                        Default
+                                                    </label>
+                                                </div>
+                                                <!-- Remove Button -->
+                                                <button type="button" class="btn btn-outline-danger btn-sm"
+                                                        @onclick="() => RemoveImage(image)">
+                                                    <i class="bi bi-trash"></i> Remove
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </InputRadioGroup>
+            </div>
+        }
+
+    </form>
+</div>
+
+<!-- Sticky Footer -->
+<footer class="bg-light border-top py-3 position-fixed bottom-0 start-0 end-0 mt-5">
+    <div class="container d-flex justify-content-center align-items-center">
+        <div>
+            <button type="button" class="btn btn-secondary btn-lg" @onclick="Cancel">Cancel</button>
+            <button type="submit" class="btn btn-success btn-lg" @onclick="SaveProduct">Save</button>
+        </div>
+    </div>
+</footer>

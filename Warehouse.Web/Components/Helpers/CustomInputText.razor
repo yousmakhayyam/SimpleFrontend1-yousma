@@ -1,0 +1,44 @@
+﻿@using System.Diagnostics
+@inherits InputBase<string>
+
+<div class="form-floating mb-3">
+    <label for="@InputId" class="form-label">@Loc[@Label]</label>
+    <Input id="@InputId"
+        @attributes="AdditionalAttributes"
+        type="@InputType"
+        class="form-control @Class"
+        value="@CurrentValue"
+        @oninput="HandleInput"
+        maxlength="@MaxCharacters"
+        required="@IsRequired"
+        readonly="@IsReadonly"
+        placeholder="@Placeholder"
+        />
+    <ValidationMessage For="@(() => CurrentValue)" />
+</div>
+
+
+@code
+{
+    [Parameter] public string InputId { get; set; } = Guid.NewGuid().ToString();
+    [Parameter] public bool IsRequired { get; set; } = false;
+    [Parameter] public bool IsReadonly { get; set; } = false;
+    [Parameter] public int MaxCharacters { get; set; } = 250;
+    [Parameter] public bool IsEmail { get; set; } = false;
+    [Parameter] public string Label { get; set; } = "";
+    [Parameter] public string Placeholder { get; set; } = "";
+    [Parameter] public string Class { get; set; } = "";
+    [Parameter] public string InputType { get; set; } = "text";
+
+    protected override bool TryParseValueFromString(string? value, out string result, out string? validationErrorMessage)
+    {
+        result = value;
+        validationErrorMessage = null;
+        return true;
+    }
+
+    private void HandleInput(ChangeEventArgs e)
+    {
+        CurrentValue = e.Value?.ToString() ?? string.Empty;
+    }
+}

@@ -1,0 +1,19 @@
+﻿@page "/auth"
+
+@using Microsoft.AspNetCore.Authorization
+
+<PageTitle>Auth</PageTitle>
+
+<h3>Profile</h3>
+
+@if (authState != null)
+{
+    var user = authState.User;
+    <p>User ID: @user.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value</p>
+    <p>User Name: @user.Identity.Name</p>
+    <p>Is Authenticated: @user.Identity.IsAuthenticated</p>
+}
+else
+{
+    <p>Loading...</p>
+}

@@ -1,0 +1,44 @@
+﻿<InputFile OnChange="OnFilesSelected" accept="@Accept" class="@Class" multiple="@AllowMultipleFiles" />
+
+@if (!string.IsNullOrEmpty(ErrorMessage))
+{
+    <div class="text-danger">@ErrorMessage</div>
+}
+
+@code {
+    [Parameter] public string Accept { get; set; } = "*/*"; // Default to accept all files
+    [Parameter] public EventCallback<List<IBrowserFile>> OnFilesSelectedCallback { get; set; }
+    [Parameter] public bool IsRequired { get; set; } = false;
+    [Parameter] public string Label { get; set; } = "Upload file(s)";
+    [Parameter] public string Class { get; set; } = "form-control"; // Default bootstrap class
+    [Parameter] public int MaxFileSizeInMB { get; set; } = 25; // Default max file size of 5MB
+    [Parameter] public bool AllowMultipleFiles { get; set; } = false; // Whether multiple files can be uploaded
+
+    private string ErrorMessage { get; set; } = string.Empty;
+
+    private async Task OnFilesSelected(InputFileChangeEventArgs e)
+    {
+        var files = e.GetMultipleFiles().ToList();
+        ErrorMessage = string.Empty;
+
+        if (files.Count == 0 && IsRequired)
+        {
+            ErrorMessage = "File is required.";
+            return;
+        }
+
+    // Validate file sizes for each file
+        foreach (var file in files)
+        {
+            var fileSizeInMB = file.Size / (1024 * 1024);
+            if (fileSizeInMB > MaxFileSizeInMB)
+            {
+                ErrorMessage = $"File '{file.Name}' exceeds the maximum allowed limit of {MaxFileSizeInMB} MB.";
+                return;
+            }
+        }
+
+    // Trigger the event callback with the selected files
+        await OnFilesSelectedCallback.InvokeAsync(files);
+    }
+}
