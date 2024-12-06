@@ -4,7 +4,7 @@
 
  - Blazor .Net 8
  - Bootstrap v5
- - MS Sql
+ - MS Sql DB
 
 ### Setup dev env
  - Setup SQL database (for example in docker)
